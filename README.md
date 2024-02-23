@@ -1,2 +1,9 @@
 # homegpt
 家庭智能语音
+
+export PROMPT_WORD=""
+export HOMEASSISTANT_IP="192.168.1.64"
+export HOMEASSISTANT_PORT="8123"
+export HOMEASSISTANT_TOKEN=""
+export WENXIN_KEYID=""
+export WENXIN_KEYSECRET=""
