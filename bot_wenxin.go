@@ -27,7 +27,7 @@ func (b *WenXinBot)Name() string {
 }
 
 func (b *WenXinBot)Ask(question string ) string {
-	completion, err := b.client.CreateYi34bChatCompletion(context.Background(), ernie.Yi34bChatRequest{
+	completion, err := b.client.CreateBaiduChatCompletion(context.Background(), ernie.BaiduChatRequest{
 		Messages: []ernie.ChatCompletionMessage{
 			{
 				Role:    ernie.MessageRoleUser,

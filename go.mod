@@ -12,5 +12,3 @@ require (
 	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 )
-
-replace github.com/anhao/go-ernie => ./go-ernie
