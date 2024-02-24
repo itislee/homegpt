@@ -4,7 +4,7 @@
 
 使用步骤
 
-1. 设置环境变量
+1. 设置环境变量  
 
 export PROMPT_WORD="请问"  
 export HOMEASSISTANT_IP="192.168.1.64"  
@@ -13,6 +13,11 @@ export HOMEASSISTANT_TOKEN=""
 export WENXIN_KEYID=""  
 export WENXIN_KEYSECRET=""  
 
-2. 编译并运行程序
-go build
+2. 编译并运行程序  
+sh build.sh
 ./homegpt
+
+3. 构建Docker镜像  
+docker build -t homegpt:v1 .
+docker images
+docker save {IMAGE_ID} -o homegpt.tar homegpt:v1

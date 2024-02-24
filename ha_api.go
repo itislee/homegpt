@@ -1,68 +1,67 @@
 package main
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"os"
 	"strings"
 	"time"
-	"os"
 )
 
 const (
-	Sensor = "sensor"
+	Sensor       = "sensor"
 	BinarySensor = "binary_sensor"
-	AlarmPanel = "alarm_control_panel"
-	Light = "light"
-	Switch = "switch"
-	Script = "script"
+	AlarmPanel   = "alarm_control_panel"
+	Light        = "light"
+	Switch       = "switch"
+	Script       = "script"
 )
 
 var StatePath = "states/%s.%s"
 var ServiceSetValuePath = "services/text/set_value"
-var LastConversationTime string
 
 type StatePost struct {
-	State string	`json:"state"`
+	State      string `json:"state"`
 	Attributes struct {
-		FriendlyName	string	`json:"friendly_name"`
-		UnitMeasure	string	`json:"unit_of_measurement"`
+		FriendlyName string `json:"friendly_name"`
+		UnitMeasure  string `json:"unit_of_measurement"`
 	} `json:"attributes"`
 }
 
 type Conversation struct {
-	EntifyId string `json:"entity_id"`
-	State string `json:"state"`
+	EntifyId   string `json:"entity_id"`
+	State      string `json:"state"`
 	Attributes struct {
-		EntityClass string `json:"entity_class"`
+		EntityClass    string `json:"entity_class"`
 		ParentEntityId string `json:"parent_entity_id"`
-		Content string `json:"content"`
-		Answers []struct {
+		Content        string `json:"content"`
+		Answers        []struct {
 			Type string `json:"type"`
-			Tts struct {
+			Tts  struct {
 				Text string `json:"text"`
-			}`json:"tts"`
+			} `json:"tts"`
 		} `json:"answers"`
-		History []string `json:"history"`
-		Timestamp string `json:"timestamp`
-		Icon string `json:"icon"`
-		FriendlyName string `json:"friend_name"`
-		SupportedFeatures int `json:"supported_features"`
+		History           []string `json:"history"`
+		Timestamp         string   `json:"timestamp`
+		Icon              string   `json:"icon"`
+		FriendlyName      string   `json:"friend_name"`
+		SupportedFeatures int      `json:"supported_features"`
 	} `json:"attributes"`
-	LastChange string `json:"last_change"`
+	LastChange  string `json:"last_change"`
 	LastUpdated string `json:"last_updated"`
-	Context struct {
-		Id string `json:"id"`
+	Context     struct {
+		Id       string `json:"id"`
 		ParentId string `json:"parent_id`
-		UserId string `json:"user_id`
-	}`json:"context"`
+		UserId   string `json:"user_id`
+	} `json:"context"`
 }
 
-type SetValueData struct{
+type SetValueData struct {
 	EntityId string `json:"entity_id"`
-	Value string `json:"value"`
+	Value    string `json:"value"`
 }
 
-func (ha *HomeAssistant)Loop() {
+func (ha *HomeAssistant) Loop() {
 	for {
 		question := ha.NeedUseGPT()
 		if question != "" {
@@ -73,27 +72,29 @@ func (ha *HomeAssistant)Loop() {
 			fmt.Printf("result:%s", r)
 			ha.ServicesTextSetValue("text.xiaomi_lx06_de09_play_text", r)
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(200 * time.Millisecond)
 	}
 }
 
-func (ha *HomeAssistant)NeedUseGPT() string {
+var LastConversationTime string
+
+func (ha *HomeAssistant) NeedUseGPT() string {
 	con, t, err := ha.GetConversasion(Sensor, "xiaomi_lx06_de09_conversation")
 	if err != nil {
 		return ""
 	}
-	if len(con) < 1 {
-		// 没有会话数据
-		fmt.Printf("no msg\n")
+	if LastConversationTime == "" {
+		LastConversationTime = t
+		fmt.Printf("first run.[%s]\n", t)
 		return ""
 	}
-	if LastConversationTime=="" || t==LastConversationTime {
-		// 没有更新
-		fmt.Printf("no new msg\n")
+	if t == LastConversationTime {
+		// 没有新消息
+		//fmt.Printf("no new msg\n")
 		return ""
 	}
-	fmt.Printf("new msg[%s]:%s\n", t, con)
 	LastConversationTime = t
+	fmt.Printf("new msg[%s]:%s\n", t, con)
 
 	// 优先从环境变量中获取，如果没有设置使用默认值
 	promptWord := os.Getenv("PROMPT_WORD")
@@ -118,14 +119,14 @@ func (ha *HomeAssistant) GetConversasion(sensorType string, entityId string) (st
 	if err != nil {
 		return "", "", err
 	}
-	//fmt.Printf("conversation:%+v\n", con)
+	// fmt.Printf("conversation:%+v\n", con)
 	return con.State, con.Attributes.Timestamp, nil
 }
 
 func (ha *HomeAssistant) ServicesTextSetValue(entityId, value string) error {
 	d := SetValueData{
 		EntityId: entityId,
-		Value: value,
+		Value:    value,
 	}
 	jsonObj, err := json.Marshal(d)
 	if err != nil {
