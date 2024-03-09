@@ -1,1 +1,1 @@
-GOOS=linux go build .
+GOOS=linux CGO_ENABLED=0 go build .
