@@ -17,12 +17,13 @@ func main() {
 	token := os.Getenv("HOMEASSISTANT_TOKEN")
 	keyid := os.Getenv("WENXIN_KEYID")
 	keysecret := os.Getenv("WENXIN_KEYSECRET")
+
 	fmt.Printf("ip:%s\nport:%d\ntoken:%s\nkeyid:%s\nkeysecret:%s\n",
 		ip, port, token, keyid, keysecret)
 	api := NewHomeAssistant(ip,
 		port,
 		token,
-		NewWenXinBot(keyid, keysecret))
+		NewOpenAIBot(os.Getenv("OPENAI_TOKEN")))
 
 	api.Loop()
 }

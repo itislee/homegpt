@@ -14,7 +14,7 @@ export WENXIN_KEYID=""
 export WENXIN_KEYSECRET=""  
 
 2. 编译并运行程序  
-sh build.sh
+sh build.sh  
 ./homegpt
 
 3. 构建Docker镜像  
