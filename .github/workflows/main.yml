@@ -3,7 +3,7 @@ name: CI/CD
 on: push
 
 env:
-  IMAGE_TAG: homegpt:latest
+  IMAGE_TAG: homegpt:v2
 
 jobs:
   build:
