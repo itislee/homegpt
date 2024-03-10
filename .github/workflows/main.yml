@@ -1,0 +1,26 @@
+name: CI/CD
+
+on: push
+
+env:
+  IMAGE_TAG: homegpt:latest
+
+jobs:
+  build:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build --tag "${IMAGE_TAG}" .
+
+      - name: Save Docker image
+        run: docker save --output image.tar "${IMAGE_TAG}"
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: image.tar
+          retention-days: 1
